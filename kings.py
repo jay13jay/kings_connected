@@ -5,7 +5,7 @@ import random
 from pygame.locals import *
 from stick_figure import *
 from objects import *
-
+import pygbutton
 
 # Define some colors
 black = ( 0, 0, 0)
@@ -34,7 +34,6 @@ pygame.display.set_caption("Kings Connected - dev")
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-
 # Current position
 x_coord=10
 y_coord=10
@@ -42,31 +41,46 @@ y_coord=10
 x_speed=0
 y_speed=0
 
-facecards = {1: "A", 10: "J", 11: "Q", 12: "K"}
+facecards = {1: "A", 11: "J", 12: "Q", 13: "K"}
 
 rules = {
-	1: "Waterfall",
-	2: "You",
-	3: "Me",
-	4: "Floor:\n Opposite of 7, everyone touches their hand to the floor, last one to do so drinks",
-	5: "Guys: \n All guys drink",
-	6: "Chicks: \n All girls drink",
-	7: "Heaven: \n Opposite of 4, everyone reaches towards the sky/ceiling; last one up drinks",
-	8: "Mate: \n Drawer of card chooses mate. Until another 8 is drawn, chosen person must drink whenever\n the person that chose them drinks",
-	9: "Rhyme: \n Drawer of card says a word, each subsequent player must say a word that rhymes with that word",
-	10: """Never have I ever:
-	Each player puts up 3 fingers, then take turns in order saying something they have never done
-	first person with all fingers down must drink""",
-	11: """Question: starting with the card being drawn, in order players take turns asking question.\n First person to answer with
-	anything except a question drinks""",
-	12: "Rule: Player that draws King gets to make a rule that will be in play until next king is drawn",
+	1: "Waterfall: everyone bottoms up, no one can stop drinking until the person to their right stops",
+	2: "You: pick someone to drink",
+	3: "Me: person who drew the card drinks",
+	4: "Floor: Opposite of 7, everyone touches their hand to the floor, last one to do so drinks",
+	5: "Guys: All guys drink",
+	6: "Chicks: All girls drink",
+	7: "Heaven: Opposite of 4, everyone reaches towards the sky/ceiling; last one up drinks",
+	8: """Mate: Drawer of card chooses mate. Until another 8 is drawn, chosen person must drink whenever
+	the person that chose them drinks""",
+	9: "Rhyme: Drawer of card says a word, each subsequent player must say a word that rhymes with that word",
+	10: "Categories: player chooses a category, each subsequent player says something relating to it",
+	11: """Never have I ever: put up three fingers, take turns saying something you have never done. If anyone
+	HAS done it they drop a finger and drink. First one with no fingers is out and drinks twice""",
+	12: """Question: starting with the card being drawn, in order players take turns asking question.
+	First person to answer with anything except a question drinks""",
+	13: "Rule: Player that draws King gets to make a rule that will be in play until next king is drawn",
 }
-random_rule = random.randrange(1, 12)
+random_rule = random.randrange(1, 13)
+# Set value for cards drawn
+cards_drawn = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0}
+total_cards = 0
+def get_rule():
+	random_rule = random.randrange(1, 13)
+	if total_cards == 52:
+		done = True
+	elif cards_drawn[random_rule] <= 4:
+		cards_drawn[random_rule] += 1
+		total_cards += 1
+		return random_rule
+	else:
+		get_rule()
+
 
 #Pane_params = ((175, 450, 200, 100), 2)
 Pane = Pane(screen,white,size,(size[0]/2-300),450,600,100)
 
-
+buttonWhiteWinBg = pygbutton.PygButton((50, 50, 60, 30), 'White')
 #Loop until the user clicks the close button.
 done = False
 pause = False
@@ -112,17 +126,25 @@ while done == False:
 				pause = True
 				print "System is paused"
 			if event.key == pygame.K_RETURN:
-				random_rule = random.randrange(1, 12)
+				random_rule = random.randrange(1, 13)
+
+				
+			if 'click' in buttonWhiteWinBg.handleEvent(event):
+				get_rule()
+				print "button clicked"
+
+
 		while pause == True:
 			print "while loop: system paused until space pressed"
 			for event in pygame.event.get():
 				if event.type ==KEYUP:
 					if event.key==K_SPACE:
 						pause = False
-				
+						
 	
 	#random_rule = random.randrange(1, 12)
-	#print rules[random_rule]
+	print rules[random_rule]
+	print cards_drawn
 
 	#******************************************#
 	# **** Keep all pre-move logic above! **** #
@@ -142,6 +164,9 @@ while done == False:
 	# Draw the item
 	draw_stick_figure(screen, white, x_coord, y_coord) 
 	draw_box(screen, 1100, 100)
+
+	#draw button
+	buttonWhiteWinBg.draw(screen)
 
 
 	# ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
