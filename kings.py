@@ -3,6 +3,7 @@ import os, sys, pygame, random, pygbutton
 from pygame.locals import *
 from stick_figure import *
 from objects import *
+import platform
 
 # Define some colors
 black = ( 0, 0, 0)
@@ -51,7 +52,7 @@ rules = {
 	5: "Guys: All guys drink",
 	6: "Chicks: All girls drink",
 	7: "Heaven: Opposite of 4, everyone reaches towards the sky/ceiling; last one up drinks",
-	8: """Mate: Drawer of card chooses mate. Until another 8 is drawn, chosen person must drink whenever
+	8: """Mate: Drawer of card chooses mate. Until another 8 is drawn(or the rest of the game), chosen person must drink whenever
 	the person that chose them drinks""",
 	9: "Rhyme: Drawer of card says a word, each subsequent player must say a word that rhymes with that word",
 	10: "Categories: player chooses a category, each subsequent player says something relating to it",
@@ -61,15 +62,27 @@ rules = {
 	First person to answer with anything except a question drinks""",
 	13: "Rule: Player that draws King gets to make a rule that will be in play until next king is drawn",
 }
-random_rule = random.randrange(1, 13)
+random_rule = random.randrange(1, 14)
 # Set value for cards drawn
 cards_drawn = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0}
 total_cards = 0
 def get_rule():
-	random_rule = random.randrange(1, 13)
-	cards_drawn[random_rule] += 1
-	return random_rule
+	rule = random.randrange(1, 14)
+	global total_cards
+	# For as long as the card drawn has already been drawn 4 times, re-draw
+	while cards_drawn[rule] >= 4:
+		if total_cards >= 52:
+			return True
+		rule = random.randrange(1, 14)
 
+	
+	cards_drawn[rule] += 1
+	total_cards += 1
+	if total_cards >= 52:
+		done = True
+	else:
+		return rule
+	
 
 #Pane_params = ((175, 450, 200, 100), 2)
 Pane = Pane(screen,white,size,(size[0]/2-300),450,600,100)
@@ -120,11 +133,19 @@ while done == False:
 				print "System is paused"
 			if event.key == pygame.K_RETURN:
 				random_rule = get_rule()
+				if random_rule is True:
+					done = True
+				else:
+					pass
+				
+
 
 				
 			if 'click' in buttonWhiteWinBg.handleEvent(event):
 				random_rule = get_rule()
 				print "button clicked"
+				windowBgColor = RED
+
 
 
 		while pause == True:
@@ -138,6 +159,7 @@ while done == False:
 	#random_rule = random.randrange(1, 12)
 	#print rules[random_rule]
 	print cards_drawn
+	print total_cards
 
 	#******************************************#
 	# **** Keep all pre-move logic above! **** #
