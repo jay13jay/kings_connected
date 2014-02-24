@@ -1,11 +1,8 @@
 #!/usr/bin/python
-import os, sys
-import pygame
-import random
+import os, sys, pygame, random, pygbutton
 from pygame.locals import *
 from stick_figure import *
 from objects import *
-import pygbutton
 
 # Define some colors
 black = ( 0, 0, 0)
@@ -41,6 +38,9 @@ y_coord=10
 x_speed=0
 y_speed=0
 
+# Button define
+buttonWhiteWinBg = pygbutton.PygButton((50, 50, 60, 30), 'White')
+
 facecards = {1: "A", 11: "J", 12: "Q", 13: "K"}
 
 rules = {
@@ -67,20 +67,13 @@ cards_drawn = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0}
 total_cards = 0
 def get_rule():
 	random_rule = random.randrange(1, 13)
-	if total_cards == 52:
-		done = True
-	elif cards_drawn[random_rule] <= 4:
-		cards_drawn[random_rule] += 1
-		total_cards += 1
-		return random_rule
-	else:
-		get_rule()
+	cards_drawn[random_rule] += 1
+	return random_rule
 
 
 #Pane_params = ((175, 450, 200, 100), 2)
 Pane = Pane(screen,white,size,(size[0]/2-300),450,600,100)
 
-buttonWhiteWinBg = pygbutton.PygButton((50, 50, 60, 30), 'White')
 #Loop until the user clicks the close button.
 done = False
 pause = False
@@ -126,11 +119,11 @@ while done == False:
 				pause = True
 				print "System is paused"
 			if event.key == pygame.K_RETURN:
-				random_rule = random.randrange(1, 13)
+				random_rule = get_rule()
 
 				
 			if 'click' in buttonWhiteWinBg.handleEvent(event):
-				get_rule()
+				random_rule = get_rule()
 				print "button clicked"
 
 
@@ -143,7 +136,7 @@ while done == False:
 						
 	
 	#random_rule = random.randrange(1, 12)
-	print rules[random_rule]
+	#print rules[random_rule]
 	print cards_drawn
 
 	#******************************************#
