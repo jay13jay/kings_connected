@@ -1,0 +1,14 @@
+#!/usr/bin/python
+
+import os
+
+class Tickets(object):
+	def init(queue):
+		self.q = queue
+		pass
+
+	def linux():
+		pass
+
+	def windows():
+
