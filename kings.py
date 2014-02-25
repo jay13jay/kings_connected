@@ -40,7 +40,7 @@ x_speed=0
 y_speed=0
 
 # Button define
-buttonWhiteWinBg = pygbutton.PygButton((50, 50, 60, 30), 'White')
+buttonWhiteWinBg = pygbutton.PygButton((50, 50, 100, 30), 'Draw card')
 
 facecards = {1: "A", 11: "J", 12: "Q", 13: "K"}
 
@@ -137,7 +137,7 @@ while done == False:
 					done = True
 				else:
 					pass
-				
+
 
 
 				
