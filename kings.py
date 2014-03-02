@@ -14,11 +14,11 @@ red = ( 255, 0, 0)
 
 pygame.init()
 
-
+# Game globals, screen size, game speed(clock) and the actual screen object, also title bar
 # Set the width and height of the screen [width,height] (comes out to be Y, X. freaking wierd...)
 size = [1200,600]
-
-
+# Used to manage how fast the screen updates
+clock = pygame.time.Clock()
 # Set screen parameters
 # Outer limits
 screen_bottom = size[1]
@@ -28,21 +28,26 @@ screen_right = size[0]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Kings Connected - dev")
 
+# End Pygame settings
 
-# Used to manage how fast the screen updates
-clock = pygame.time.Clock()
 
-# Current position
+
+
+# Current position of stick figure
 x_coord=10
 y_coord=10
 
 x_speed=0
 y_speed=0
 
-# Button define
-buttonWhiteWinBg = pygbutton.PygButton((50, 50, 100, 30), 'Draw card')
 
-facecards = {1: "A", 11: "J", 12: "Q", 13: "K"}
+# All of the button globals go here
+
+#catButt = pygbutton.PygButton((100, 200, 200, 300), normal='catbutton_normal.png', down='catbutton_down.png', highlight='catbutton_highlight.png')
+#button = pygbutton.PygButton((50, 50, 100, 30), 'Draw card')
+# text box size, for reference size[0]/2-300),450
+
+cardface = {1:"A",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7",8:"8",9:"9",10:"10",11:"J",12:"Q",13:"K"}
 
 rules = {
 	1: "Waterfall: everyone bottoms up, no one can stop drinking until the person to their right stops",
@@ -63,23 +68,31 @@ rules = {
 	13: "Rule: Player that draws King gets to make a rule that will be in play until next king is drawn",
 }
 random_rule = random.randrange(1, 14)
+string_rule = str(random_rule)
+print string_rule
 # Set value for cards drawn
 cards_drawn = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0}
 total_cards = 0
+
+
 def get_rule():
 	rule = random.randrange(1, 14)
 	global total_cards
 	# For as long as the card drawn has already been drawn 4 times, re-draw
 	while cards_drawn[rule] >= 4:
-		if total_cards >= 52:
-			return True
-		rule = random.randrange(1, 14)
-
+		rule = random.randrange(1,14)
+		#if total_cards >= 52:
+		#	global done
+		#	done = True
+		#rule = random.randrange(1, 14)
+		# Commented out above mainly because the increment happens after this, so we really only need it to
+		# re-draw a card when it's already been drawn 4 times
 	
 	cards_drawn[rule] += 1
 	total_cards += 1
 	if total_cards >= 52:
-		done = True
+		return True
+	#done = True
 	else:
 		return rule
 	
@@ -92,7 +105,7 @@ done = False
 pause = False
 
 def draw_box(screen,x,y):
-	pygame.draw.rect(screen,white,[x,y,50,50])
+	pygame.draw.rect(screen,white,[x,y,100,150])
 # -------- Main Program Loop -----------
 while done == False:
 	# ALL EVENT PROCESSING SHOULD GO BELOW THIS COMMENT
@@ -100,9 +113,35 @@ while done == False:
 		if event.type == pygame.QUIT: # If user clicked close
 			print " Exiting program "
 			done = True # Flag that we are done so we exit this loop
-			
+
+
+		# Get mouse position
+		pos = pygame.mouse.get_pos()
+		mouse_x = pos[0]
+		mouse_y = pos[1]
+		
 
 		# ALL EVENT PROCESSING SHOULD GO ABOVE THIS COMMENT
+		# Mouse things
+		if event.type == pygame.MOUSEBUTTONDOWN:
+				print "mouse was pressed!"
+				print mouse_x, "mouse x position"
+				print mouse_y, "mouse y position"
+				mouse_col = collision_detect(mouse_x,mouse_y,1,1,1000,100,100,150,screen)
+				print mouse_col
+				if mouse_col is True:
+					random_rule = get_rule()
+					string_rule = str(random_rule)
+				if random_rule is True:
+					done = True
+				else:
+					pass
+
+
+
+
+
+		# Key press things
 		if event.type == pygame.KEYDOWN:
 			# Figure out if it was an arrow key. If so
 			# adjust speed.
@@ -131,20 +170,18 @@ while done == False:
 			if event.key == pygame.K_SPACE:
 				pause = True
 				print "System is paused"
+			
 			if event.key == pygame.K_RETURN:
 				random_rule = get_rule()
+				string_rule = str(random_rule)
 				if random_rule is True:
 					done = True
 				else:
 					pass
-
-
-
-				
-			if 'click' in buttonWhiteWinBg.handleEvent(event):
-				random_rule = get_rule()
-				print "button clicked"
-				windowBgColor = RED
+			#if 'click' in button.handleEvent(event):
+			#	random_rule = get_rule()
+			#	print "button clicked"
+			#	windowBgColor = RED
 
 
 
@@ -158,8 +195,8 @@ while done == False:
 	
 	#random_rule = random.randrange(1, 12)
 	#print rules[random_rule]
-	print cards_drawn
-	print total_cards
+	#print cards_drawn
+	#print total_cards
 
 	#******************************************#
 	# **** Keep all pre-move logic above! **** #
@@ -173,15 +210,38 @@ while done == False:
 	# Start code to draw shit
 	screen.fill(black)
 
-	Pane.addRect()
-	Pane.addText(rules[random_rule])
+	if total_cards > 0 and total_cards < 51:
+		Pane.addRect()
+		Pane.addText(rules[random_rule])
+	elif total_cards >=51:
+		Pane.addRect()
+		Pane.addText("LAST")
+		Pane.addText(rules[random_rule]+"Last")
+	else:
+		Pane.addRect()
+		Pane.addText("\nPlease press enter or click on the card to draw a card")
+
 
 	# Draw the item
 	draw_stick_figure(screen, white, x_coord, y_coord) 
-	draw_box(screen, 1100, 100)
+	draw_box(screen, 1000, 100)
+	#add_text(1025,150,"testing",17,red,screen)
+	# Top left
+	add_text(1007,105,string_rule,17,red,screen)
+	# Top Right
+	add_text(1080,105,string_rule,17,red,screen)
+	# Bottom left
+	add_text(1007,227,string_rule,17,red,screen)
+	# Bottom right
+	add_text(1080,227,string_rule,17,red,screen)
+	# Center
+	add_text(1035,160,cardface[random_rule],17,red,screen)
+
 
 	#draw button
-	buttonWhiteWinBg.draw(screen)
+	#catButt.draw(screen)
+	#button.draw(screen)
+
 
 
 	# ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT

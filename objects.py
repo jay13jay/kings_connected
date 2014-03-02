@@ -7,6 +7,22 @@ white = ( 255, 255, 255)
 green = ( 0, 255, 0)
 red = ( 255, 0, 0)
 
+
+# Collision detection:
+
+def collision_detect(x1,y1,w1,h1,x2,y2,w2,h2,screen):
+	
+	if x2+w2>=x1>=x2 and y2+h2>=y1>=y2:
+		return True
+	elif x2+w2>=x1+w1>=x2 and y2+h2>=y1>=y2:
+		return True
+	elif x2+w2>=x1>=x2 and y2+h2>=y1+h1>=y2:
+		return True
+	elif x2+w2>=x1+w1>=x2 and y2+h2>=y1+h1>=y2:
+		return True
+	else:
+		return False
+
 # Draw objects:
 
 class Box(object):
@@ -39,6 +55,11 @@ class Card(object):
 	def __init__(self,x,y):
 		self.x = x 
 		self.y = y
+def add_text(x,y,text,size,color,screen):
+	font = pygame.font.SysFont('Arial', size)
+	screen.blit(font.render(text, True, (color)), (x,y))
+
+
 
 
 class Pane(object):
@@ -60,7 +81,7 @@ class Pane(object):
 #        pygame.display.update()
 
     def addText(self,text):
-        #self.screen.blit(self.font.render('This is the douchey status box I\'ll use for the rules at some point', True, (255,0,0)), (200, 100))
+        # Rules status box. Need to add word wrap but it sorta works
 		self.screen.blit(self.font.render(text, True, (255,0,0)), ((self.l+50), (self.t+25)))
 
 #        pygame.display.update()
