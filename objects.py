@@ -55,6 +55,35 @@ class Card(object):
 	def __init__(self,x,y):
 		self.x = x 
 		self.y = y
+
+	def get_rule():
+		rule = random.randrange(1, 14)
+		global total_cards
+		# For as long as the card drawn has already been drawn 4 times, re-draw
+		while cards_drawn[rule] >= 4:
+			rule = random.randrange(1,14)
+	
+		cards_drawn[rule] += 1
+		total_cards += 1
+		if total_cards >= 52:
+			return True
+		#done = True
+		else:
+			return rule
+
+	def render(self,total_cards):
+		if total_cards > 0 and total_cards < 51:
+			Pane.addRect()
+			Pane.addText(rules[random_rule])
+		elif total_cards >=51:
+			Pane.addRect()
+			Pane.addText("LAST")
+			Pane.addText(rules[random_rule])
+		else:
+			Pane.addRect()
+			Pane.addText("\nPlease press enter or click on the card to draw a card")
+
+
 def add_text(x,y,text,size,color,screen):
 	font = pygame.font.SysFont('Arial', size)
 	screen.blit(font.render(text, True, (color)), (x,y))
