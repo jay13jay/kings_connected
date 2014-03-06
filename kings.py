@@ -95,6 +95,7 @@ pause = False
 
 
 # Mouse stuff
+old_mouse_pos = [0,0]
 mouse_pressed = False
 mouse_down = False
 mouse_released =False
@@ -113,41 +114,52 @@ while done == False:
 
 
 		# Get mouse position
-		pos = pygame.mouse.get_pos()
-		mouse_x = pos[0]
-		mouse_y = pos[1]
+		mouse_pos = pygame.mouse.get_pos()
+		mouse_x = mouse_pos[0]
+		mouse_y = mouse_pos[1]
 
-		
-
-		# ALL EVENT PROCESSING SHOULD GO ABOVE THIS COMMENT
 		# Mouse things
-		mouse_col = collision_detect(mouse_x,mouse_y,1,1,1000,100,100,150,screen)
+		mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card.x,Card.y,Card.w,Card.h,screen)
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
+			mouse_pos = pygame.mouse.get_pos()
+			old_mouse_pos = mouse_pos
+
+			mouse_pressed = True
+			mouse_down = True
 			if mouse_col is True:
-				mouse_pressed = True
-				mouse_down = True
+					target = Card
+			
+			
 
 		if event.type == pygame.MOUSEBUTTONUP:
 			mouse_released = True
 			mouse_down = False
+			mouse_pos = pygame.mouse.get_pos()
+			pos_change_x = old_mouse_pos[0] - mouse_pos[0]
+			pos_change_y = old_mouse_pos[1] - mouse_pos[1]
+			# Release target
+			
+		
+		# While mouse buttonis down, if object is under target, move it
+		if mouse_down == True:
+			mouse_pos = pygame.mouse.get_pos()
+			pos_change_x = old_mouse_pos[0] - mouse_pos[0]
+			pos_change_y = old_mouse_pos[1] - mouse_pos[1]
+			print "mouse is pressed down"
+			old_mouse_pos = mouse_pos
+			if target != None:
+				target.x = target.x - pos_change_x
+				target.y = target.y - pos_change_y
+				
 
 
 		if mouse_pressed == True:
 			mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card.x,Card.y,Card.w,Card.h,screen)
-
-
-			print "mouse was pressed!"
-			print mouse_x, "mouse x position"
-			print mouse_y, "mouse y position"
-			#mouse_col = collision_detect(mouse_x,mouse_y,1,1,1000,100,100,150,screen)
-			mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card.x,Card.y,Card.w,Card.h,screen)
-
-			print mouse_col,"\n"
+			#old_mouse_pos = mouse_pos
 			
 		if mouse_released == True:
-			#mouse_col = collision_detect(mouse_x,mouse_y,1,1,1000,100,100,150,screen)
-			mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card.x,Card.y,Card.w,Card.h,screen)
+			target = None
 
 
 

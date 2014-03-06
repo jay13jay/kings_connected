@@ -68,7 +68,7 @@ class Card(object):
 
 
 	# All logic designed to change the location of the card
-	def move_card(self):
+	def move_card(self,mouse_pos):
 		pass
 
 
