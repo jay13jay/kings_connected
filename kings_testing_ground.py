@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import os, sys, pygame, random, pygbutton
+import os, sys, pygame, random
 from pygame.locals import *
 from stick_figure import *
 #from objects import *
