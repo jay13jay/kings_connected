@@ -1,8 +1,7 @@
 #!/usr/bin/python
 import random
-from objects import *
-
-
+import pygame
+#from objects import *
 
 # Trying to create a good class layout. Define all objects, essentially. list goes as follows:
 # - Card
@@ -11,6 +10,10 @@ from objects import *
 # - Game mode: continueous draw until quit; 52 card limit; 4 kings limit; custom; <= this class for contains the game end modules based of chosen moded
 # - Players: a class to control all players, maybe a new class for turns
 
+black = ( 0, 0, 0)
+white = ( 255, 255, 255)
+green = ( 0, 255, 0)
+red = ( 255, 0, 0)
 
 
 rules = {
@@ -34,6 +37,19 @@ rules = {
 }
 cardface = {0:0,1:"A",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7",8:"8",9:"9",10:"10",11:"J",12:"Q",13:"K"}
 
+
+def collision_detect(x1,y1,w1,h1,x2,y2,w2,h2,screen):
+	
+	if x2+w2>=x1>=x2 and y2+h2>=y1>=y2:
+		return True
+	elif x2+w2>=x1+w1>=x2 and y2+h2>=y1>=y2:
+		return True
+	elif x2+w2>=x1>=x2 and y2+h2>=y1+h1>=y2:
+		return True
+	elif x2+w2>=x1+w1>=x2 and y2+h2>=y1+h1>=y2:
+		return True
+	else:
+		return False
 
 
 class Card(object):
@@ -71,6 +87,9 @@ class Card(object):
 	def move_card(self,mouse_pos):
 		pass
 
+	def add_text(self,x,y,text,size,color):
+		font = pygame.font.SysFont('Arial', size)
+		self.screen.blit(font.render(text, True, (color)), (x,y))
 
 	# All classes should have a render to make a "render all objects" class possible
 	# This class, if passed a list of Card[] should suffice to make card rendering easy enough
@@ -78,15 +97,15 @@ class Card(object):
 		# Draw card box
 		self.draw_box(self.screen)
 		# Top left
-		add_text((self.x+7),(self.y+5),cardface[self.rule],font_size,red,self.screen)
+		self.add_text((self.x+7),(self.y+5),cardface[self.rule],font_size,red)
 		# Top Right
-		add_text((self.x+80),(self.y+5),cardface[self.rule],font_size,red,self.screen)
+		self.add_text((self.x+80),(self.y+5),cardface[self.rule],font_size,red)
 		# Bottom left
-		add_text((self.x+7),(self.y+127),cardface[self.rule],font_size,red,self.screen)
+		self.add_text((self.x+7),(self.y+127),cardface[self.rule],font_size,red)
 		# Bottom right
-		add_text((self.x+80),(self.y+127),cardface[self.rule],font_size,red,self.screen)
+		self.add_text((self.x+80),(self.y+127),cardface[self.rule],font_size,red)
 		# Center
-		add_text((self.x+35),(self.y+60),cardface[self.rule],font_size,red,self.screen)
+		self.add_text((self.x+35),(self.y+60),cardface[self.rule],font_size,red)
 
 
 class Pane(object):
@@ -100,6 +119,10 @@ class Pane(object):
         self.w = w
         self.h = h
 #        pygame.display.update()
+	
+	#def add_text(x,y,text,size,color):
+	#	font = pygame.font.SysFont('Arial', size)
+	#	self.screen.blit(font.render(text, True, (color)), (x,y))
 
 
     def addRect(self):
@@ -110,6 +133,25 @@ class Pane(object):
     def addText(self,text):
         # Rules status box. Need to add word wrap but it sorta works
 		self.screen.blit(self.font.render(text, True, (255,0,0)), ((self.l+50), (self.t+25)))
+
+
+class Player(object):
+	def __init__(self,screen,position):
+		self.screen = screen
+		self.position = position
+
+	def add_player(self):
+		pass
+
+	def attributes(self):
+		# Going to need age, gender, etc
+		pass
+
+	def Player_char(self):
+		draw_stick_figure(screen, white, position[0], position[1]) 
+
+
+
 	
 
 

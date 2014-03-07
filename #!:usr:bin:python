@@ -1,0 +1,5 @@
+#!/usr/bin/python
+
+class Test(object):
+	def __init__(text):
+		self.text = text
