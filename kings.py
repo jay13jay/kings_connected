@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import os, sys, pygame, random, pygbutton
+import os, sys, pygame, random
 from pygame.locals import *
 from stick_figure import *
 #from objects import *
@@ -16,7 +16,7 @@ red = ( 255, 0, 0)
 pygame.init()
 
 # Game globals, screen size, game speed(clock) and the actual screen object, also title bar
-# Set the width and height of the screen [width,height] (comes out to be Y, X. freaking wierd...)
+# Set the width and height of the screen [width,height]
 size = [1200,600]
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
@@ -89,7 +89,9 @@ target = None
 
 Card1 = Card(screen,450,100,100,150,total_cards,cards_drawn)
 Card2 = Card(screen,450,300,100,150,total_cards,cards_drawn)
-card_objects = [Card1,Card2]
+Card3 = Card(screen,600,300,100,150,total_cards,cards_drawn)
+
+card_objects = [Card1,Card2,Card3]
 
 
 # -------- Main Program Loop -----------
@@ -111,52 +113,52 @@ while done == False:
 			mouse_col_i = collision_detect(mouse_x,mouse_y,1,1,i.x,i.y,i.w,i.h,screen)
 			#print "collision with",i,"is:\t",mouse_col_i
 
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			mouse_pos = pygame.mouse.get_pos()
-			old_mouse_pos = mouse_pos
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				mouse_pos = pygame.mouse.get_pos()
+				old_mouse_pos = mouse_pos
 
-			mouse_pressed = True
-			mouse_down = True
-			for i in card_objects:
-				if mouse_col_i is True:
-					target = i
+				mouse_pressed = True
+				mouse_down = True
+
+			if mouse_col_i is True:
+				target = i
 			
 			
 
-		if event.type == pygame.MOUSEBUTTONUP:
-			mouse_released = True
-			mouse_down = False
-			mouse_pos = pygame.mouse.get_pos()
-			pos_change_x = old_mouse_pos[0] - mouse_pos[0]
-			pos_change_y = old_mouse_pos[1] - mouse_pos[1]
-			# Release target
+			if event.type == pygame.MOUSEBUTTONUP:
+				mouse_released = True
+				mouse_down = False
+				mouse_pos = pygame.mouse.get_pos()
+				pos_change_x = old_mouse_pos[0] - mouse_pos[0]
+				pos_change_y = old_mouse_pos[1] - mouse_pos[1]
+				# Release target
 			
 		
-		# While mouse buttonis down, if object is under target, move it
-		if mouse_down == True:
-			mouse_pos = pygame.mouse.get_pos()
-			pos_change_x = old_mouse_pos[0] - mouse_pos[0]
-			pos_change_y = old_mouse_pos[1] - mouse_pos[1]
-			old_mouse_pos = mouse_pos
-			if target != None:
-				target.x = target.x - pos_change_x
-				target.y = target.y - pos_change_y
+			# While mouse buttonis down, if object is under target, move it
+			if mouse_down == True:
+				mouse_pos = pygame.mouse.get_pos()
+				pos_change_x = old_mouse_pos[0] - mouse_pos[0]
+				pos_change_y = old_mouse_pos[1] - mouse_pos[1]
+				old_mouse_pos = mouse_pos
+				if target != None:
+					target.x = target.x - pos_change_x
+					target.y = target.y - pos_change_y
 				
-		#if mouse_pressed == True:
-		#	mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card1.x,Card1.y,Card1.w,Card1.h,screen)
-			#old_mouse_pos = mouse_pos
+			#if mouse_pressed == True:
+			#	mouse_col = collision_detect(mouse_x,mouse_y,1,1,Card1.x,Card1.y,Card1.w,Card1.h,screen)
+				#old_mouse_pos = mouse_pos
 			
-		# when mouse is released, draw card, check for game end
-		if mouse_released == True:
-			target = None
+			# when mouse is released, draw card, check for game end
+			if mouse_released == True:
+				target = None
 
-			if mouse_col is True:
-				random_rule = Card1.get_rule()
-				string_rule = str(random_rule)
-			if random_rule is True:
-				done = True
-			else:
-				pass
+				if mouse_col_i is True:
+					random_rule = i.get_rule()
+					string_rule = str(random_rule)
+				if random_rule is True:
+					done = True
+				else:
+					pass
 
 			mouse_pressed = False
 			mouse_released = False
