@@ -1,0 +1,10 @@
+########
+# TODO #
+########
+
+1) comment code for better readability. 
+	I) clean up unnecessary code
+
+2) Create method within pane(card) object for centering text(or use pictures...)
+
+3) Add logic so that the player list cannot contain two of the same user names. sanitation will be required, obv.

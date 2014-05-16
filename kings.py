@@ -6,35 +6,38 @@ from stick_figure import *
 from class_layout import *
 import platform
 
-# Define some colors
+# Define strings for RGB colors
 black = ( 0, 0, 0)
 white = ( 255, 255, 255)
 green = ( 0, 255, 0)
 red = ( 255, 0, 0)
 
 
-pygame.init()
+###############
+# Game globals#
+###############
 
-# Game globals, screen size, game speed(clock) and the actual screen object, also title bar
+#Call the pygame engine
+pygame.init()
 # Set the width and height of the screen [width,height]
 size = [1200,600]
-# Used to manage how fast the screen updates
+
+# Game system clock
 clock = pygame.time.Clock()
-# Set screen parameters
-# Outer limits
+
+
+# Screen edges
 screen_bottom = size[1]
 screen_right = size[0]
 
-#set the actual size. set in var above for changability
+# Instantiate the screen object and set its caption
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Kings Connected - dev")
 
-# End Pygame settings
+# Set the number of players
+player_list = ["player1","player2","player3","player4"]
 
-
-
-
-# Current position of stick figure
+# Stick figure starting position and velocity
 x_coord=10
 y_coord=10
 
@@ -44,7 +47,9 @@ y_speed=0
 
 #cardface = {1:"A",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7",8:"8",9:"9",10:"10",11:"J",12:"Q",13:"K"}
 
+# Dict of numbers(cards) matching their corresponding rules
 rules = {
+	0: "START",
 	1: "Waterfall: everyone bottoms up, no one can stop drinking until the person to their right stops",
 	2: "You: pick someone to drink",
 	3: "Me: person who drew the card drinks",
@@ -62,36 +67,66 @@ rules = {
 	First person to answer with anything except a question drinks""",
 	13: "Rule: Player that draws King gets to make a rule that will be in play until next king is drawn",
 }
-random_rule = random.randrange(1, 14)
-string_rule = str(random_rule)
-print string_rule
-# Set value for cards drawn
+
+
+# random rule is for accessing the dict defined above
+random_rule = 0
+# Dictionary counter for each card drawn
 cards_drawn = {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0}
+
+# Counter for the total cards drawn
 total_cards = 0
 
-	
+# Card sizes
+card_size = [100,150]
 
-#Pane_params = ((175, 450, 200, 100), 2)
+# Instantiate Pane object, a rect with method for applying text
 Pane = Pane(screen,white,size,(size[0]/2-300),450,600,100)
 
-#Loop until the user clicks the close button.
+
+# Done ends game on True
 done = False
+# Stops the while loop until a keypress on True
 pause = False
 
+###############
+# Mouse stuff #
+###############
 
-# Mouse stuff
+# Old mouse coordinates for semi-stateful mouse movement tracking
 old_mouse_pos = [0,0]
+# Was mouse just pressed? Is only True on loop that mouse was pressed
 mouse_pressed = False
+# Stays true until mouse is released
 mouse_down = False
+# Was mouse just released? Is True only on loop that mouse was released
 mouse_released =False
+# For tracking object under mouse pointer
 target = None
 
 
-Card1 = Card(screen,450,100,100,150,total_cards,cards_drawn)
-Card2 = Card(screen,450,300,100,150,total_cards,cards_drawn)
-Card3 = Card(screen,600,300,100,150,total_cards,cards_drawn)
+# NEED TO READDRESS AT A LATER DATE
 
-card_objects = [Card1,Card2,Card3]
+
+#card_list = []
+#start_pos = [250,100]
+#for i in player_list:
+	# Doing this part wrong. will address later
+#	i = Card(screen,start_pos,card_size,total_cards,cards_drawn)
+#	card_list.append(i)
+#	print card_list
+#	start_pos[0]
+#print start_pos
+#print card_size
+
+
+Card1 = Card(screen,450,100,100,150,total_cards,cards_drawn)
+Card2 = Card(screen,600,100,100,150,total_cards,cards_drawn)
+Card3 = Card(screen,450,300,100,150,total_cards,cards_drawn)
+Card4 = Card(screen,600,300,100,150,total_cards,cards_drawn)
+
+
+card_objects = [Card1,Card2,Card3,Card4]
 
 
 # -------- Main Program Loop -----------
@@ -120,7 +155,7 @@ while done == False:
 				mouse_pressed = True
 				mouse_down = True
 
-			if mouse_col_i is True:
+			if mouse_pressed is True and mouse_col_i is True and target is None:
 				target = i
 			
 			
@@ -155,13 +190,20 @@ while done == False:
 				if mouse_col_i is True:
 					random_rule = i.get_rule()
 					string_rule = str(random_rule)
-				if random_rule is True:
+					total_cards = total_cards+1
+				#if random_rule is True:
+				#	done = True
+				if total_cards >= 52:
+					print "Game over!"
 					done = True
 				else:
 					pass
 
+			# Reset the pressed and released variables, as they should only action once 
 			mouse_pressed = False
 			mouse_released = False
+
+
 
 
 
@@ -230,26 +272,28 @@ while done == False:
 	# Start code to draw shit
 	screen.fill(black)
 
-	if Card1.total_cards > 0 and Card1.total_cards < 51:
+	#if Card1.total_cards > 0 and Card1.total_cards < 51:
+	#	Pane.addRect()
+	#	Pane.addText(rules[random_rule])
+	#elif Card1.total_cards >=51:
+	#	Pane.addRect()
+	#	Pane.addText("LAST")
+	#	Pane.addText(rules[random_rule]+"Last")
+	#else:
+	#	Pane.addRect()
+	#	Pane.addText("\nPlease press enter or click on the card to draw a card")
+
+	if total_cards > 0 and total_cards < 51:
 		Pane.addRect()
 		Pane.addText(rules[random_rule])
-	elif Card1.total_cards >=51:
+	elif total_cards >=51:
 		Pane.addRect()
 		Pane.addText("LAST")
 		Pane.addText(rules[random_rule]+"Last")
 	else:
 		Pane.addRect()
 		Pane.addText("\nPlease press enter or click on the card to draw a card")
-
-
-	#if total_cards > 0 and total_cards < 51:
-	#	Card.addText(rules[random_rule])
-	#elif total_cards >=51:
-	#	Pane.addText("LAST")
-	#	Pane.addText(rules[random_rule]+"Last")
-	#else:
-	#	Pane.addText("\nPlease press enter or click on the card to draw a card")
-
+	
 
 	# Draw the item
 	draw_stick_figure(screen, white, x_coord, y_coord) 
@@ -260,7 +304,8 @@ while done == False:
 	#Card1.render(17)
 	#Card2.render(20)
 	for card in card_objects:
-		card.render(17)
+		# Render card, pass it the font size
+		card.render(15)
 
 
 
@@ -276,3 +321,4 @@ while done == False:
 # If you forget this line, the program will 'hang'
 # on exit if running from IDLE.
 pygame.quit()
+
