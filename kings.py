@@ -143,7 +143,7 @@ while done == False:
 		mouse_x = mouse_pos[0]
 		mouse_y = mouse_pos[1]
 
-		# Mouse things
+		
 		for i in card_objects:
 			mouse_col_i = collision_detect(mouse_x,mouse_y,1,1,i.x,i.y,i.w,i.h,screen)
 			#print "collision with",i,"is:\t",mouse_col_i
@@ -199,6 +199,8 @@ while done == False:
 				else:
 					pass
 
+
+
 			# Reset the pressed and released variables, as they should only action once 
 			mouse_pressed = False
 			mouse_released = False
@@ -237,13 +239,13 @@ while done == False:
 				pause = True
 				print "System is paused"
 			
-			if event.key == pygame.K_RETURN:
-				random_rule = Card1.get_rule()
-				string_rule = str(random_rule)
-				if random_rule is True:
-					done = True
-				else:
-					pass
+			#if event.key == pygame.K_RETURN:
+			#	random_rule = Card1.get_rule()
+			#	string_rule = str(random_rule)
+			#	if random_rule is True:
+			#		done = True
+			#	else:
+			#		pass
 
 
 
